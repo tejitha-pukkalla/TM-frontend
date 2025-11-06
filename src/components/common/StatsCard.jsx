@@ -1,4 +1,5 @@
 // src/components/common/StatsCard.jsx
+import React from 'react';
 const StatsCard = ({ title, value, icon, color = 'purple', trend, subtitle }) => {
   const colorClasses = {
     purple: 'bg-purple-500',

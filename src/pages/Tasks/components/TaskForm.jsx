@@ -1,4 +1,3 @@
-// src/pages/Tasks/components/TaskForm.jsx
 import { useState, useEffect } from 'react';
 import Input from '../../../components/common/Input';
 import TextArea from '../../../components/common/TextArea';
@@ -44,20 +43,6 @@ const TaskForm = ({ initialData, onSubmit, loading, onCancel, isEditMode = false
     }
   };
 
-  // const fetchProjectMembers = async (projectId) => {
-  //   try {
-  //     const response = await projectService.getProjectMembers(projectId);
-  //     // Filter only members (not team leads or project leads)
-  //     const members = response.data.filter(m => m.roleInProject === 'member');
-  //     setProjectMembers(members);
-  //   } catch (error) {
-  //     console.error('Error fetching project members:', error);
-  //   }
-  // };
-
-
-
-
 
   const fetchProjectMembers = async (projectId) => {
   try {
@@ -70,8 +55,6 @@ const TaskForm = ({ initialData, onSubmit, loading, onCancel, isEditMode = false
     console.error('Error fetching project members:', error);
   }
 };
-
-
 
 
 
@@ -171,22 +154,12 @@ const TaskForm = ({ initialData, onSubmit, loading, onCancel, isEditMode = false
         disabled={loading || !formData.projectId}
       >
         <option value="">Select Member</option>
-        {/* {projectMembers.map((member) => (
-          <option key={member.userId._id} value={member.userId._id}>
-            {member.userId.name} - {member.userId.email}
-          </option>
-        ))} */}
-
-
-
-        {projectMembers.map((member) => (
+        
+       {projectMembers.map((member) => (
           <option key={member.userId._id || member.userId} value={member.userId._id || member.userId}>
             {member.userId?.name || member.name} - {member.roleInProject.toUpperCase()} - {member.userId?.email || member.email}
           </option>
         ))}
-
-
-        
       </Select>
 
       {/* Row: Estimated Time & Due Date */}
@@ -248,13 +221,6 @@ const TaskForm = ({ initialData, onSubmit, loading, onCancel, isEditMode = false
         >
           Cancel
         </Button>
-        {/* <Button
-          type="submit"
-          disabled={loading}
-          className="bg-blue-600 hover:bg-blue-700"
-        >
-          {loading ? 'Creating...' : 'Create Task'}
-        </Button> */}
         <Button
           type="submit"
           disabled={loading}

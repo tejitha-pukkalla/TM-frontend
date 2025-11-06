@@ -1,4 +1,3 @@
-// src/pages/Tasks/components/TaskUpdates.jsx
 import { useState } from 'react';
 import AddTaskUpdate from './AddTaskUpdate';
 import Avatar from '../../../components/common/Avatar';

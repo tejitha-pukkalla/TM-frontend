@@ -1,4 +1,3 @@
-// src/pages/Tasks/MyTasks.jsx
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import taskService from '../../services/task.service';
@@ -18,20 +17,6 @@ const MyTasks = () => {
     fetchMyTasks();
   }, []);
 
-  // const fetchMyTasks = async () => {
-  //   try {
-  //     setLoading(true);
-  //     const response = await taskService.getAllTasks({
-  //       assignedTo: user._id,
-  //       limit: 100
-  //     });
-  //     setTasks(response.data);
-  //   } catch (error) {
-  //     console.error('Error fetching tasks:', error);
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
 
 
   const fetchMyTasks = async () => {

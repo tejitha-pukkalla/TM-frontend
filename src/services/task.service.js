@@ -15,22 +15,6 @@ const taskService = {
   },
 
 
-  // Get MY tasks (assigned to me)
-  // getMyTasks: async (filters = {}) => {
-  //   try {
-  //     const response = await api.get('/tasks', { params: filters });
-  //     return response.data;
-  //   } catch (error) {
-  //     throw error.response?.data || error;
-  //   }
-  // },
-
-
-
-
-
-
-
   // ADD THIS AFTER getAllTasks function
 // Get MY tasks (assigned to me) - For Member, Project Lead, Team Lead
 getMyTasks: async (filters = {}) => {
