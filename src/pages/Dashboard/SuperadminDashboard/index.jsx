@@ -4,6 +4,8 @@ import { useNavigate } from 'react-router-dom';
 import DashboardLayout from '../../../layout/DashboardLayout';
 import LoadingSpinner from '../../../components/common/LoadingSpinner';
 import { dashboardService } from '../../../services/dashboard.service';
+import AttendanceOverview from './AttendanceOverview';
+
 
 // Import sub-components
 import StatsCards from './StatsCards';
@@ -63,6 +65,9 @@ const SuperadminDashboard = () => {
 
         {/* Stats Cards Grid */}
         <StatsCards stats={stats} />
+
+        {/* ADD ATTENDANCE OVERVIEW  */}
+        <AttendanceOverview />
 
         {/* Users by Role & Recent Activities */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">

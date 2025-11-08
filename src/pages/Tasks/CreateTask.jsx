@@ -38,6 +38,12 @@ const CreateTask = () => {
   return (
     <DashboardLayout>
     <div className="p-6 max-w-4xl mx-auto">
+      <button
+          onClick={() => navigate('/tasks')}
+          className="mb-6 flex items-center text-gray-600 hover:text-purple-600 font-medium"
+        >
+          ← Back to Tasks
+        </button>
       {/* Header */}
       <div className="mb-6">
         <h1 className="text-3xl font-bold text-gray-800">Create New Task</h1>

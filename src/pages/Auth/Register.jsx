@@ -132,6 +132,12 @@ const Register = () => {
     <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-4xl mx-auto">
         <div className="bg-white rounded-2xl shadow-xl p-8">
+          <button
+          onClick={() => navigate('/users')}
+          className="mb-6 flex items-center text-gray-600 hover:text-purple-600 font-medium"
+        >
+          ← Back to Users
+        </button>
           {/* Header */}
           <div className="mb-8">
             <h1 className="text-3xl font-bold text-gray-900 mb-2">

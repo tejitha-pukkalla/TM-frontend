@@ -5,6 +5,7 @@ import DashboardLayout from '../../../layout/DashboardLayout';
 import StatsCard from '../../../components/common/StatsCard';
 import LoadingSpinner from '../../../components/common/LoadingSpinner';
 import { dashboardService } from '../../../services/dashboard.service';
+import AttendanceWidget from './AttendanceWidget';
 
 const MemberDashboard = () => {
   const navigate = useNavigate();
@@ -133,7 +134,7 @@ const MemberDashboard = () => {
               />
             </div>
           </div>
-
+  <AttendanceWidget />
           {/* Task Breakdown */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="text-center p-4 bg-yellow-50 rounded-lg border border-yellow-200">

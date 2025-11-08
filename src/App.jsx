@@ -6,6 +6,7 @@ import ProtectedRoute from './routes/ProtectedRoute';
 import RoleBasedRoute from './routes/RoleBasedRoute';
 import DashboardRedirect from './routes/DashboardRedirect';
 import { ROLES } from './config/constants';
+import { AttendanceProvider } from './context/AttendanceContext';
 
 // Pages
 import Login from './pages/Auth/Login';
@@ -46,6 +47,11 @@ import ManualTimeEntry from './pages/TimeTracking/ManualTimeEntry';
 
 // Notification Pages
 import NotificationsList from './pages/Notifications/NotificationsList';
+
+// Attendance Pages
+import MyAttendance from './pages/Attendance/MyAttendance';
+import AttendanceCalendar from './pages/Attendance/AttendanceCalendar';
+import AttendanceReport from './pages/Attendance/AttendanceReport';
 
 function AppRoutes() {
   const { isAuthenticated } = useAuth();
@@ -311,6 +317,50 @@ function AppRoutes() {
       />
 
       {/* Notification Routes - All authenticated users */}
+      {/* <Route
+        path="/notifications"
+        element={
+          <ProtectedRoute>
+            <NotificationsList />
+          </ProtectedRoute>
+        }
+      /> */}
+
+
+{/* Attendance Routes */}
+      {/* My Attendance History - All authenticated users */}
+      <Route
+        path="/attendance/my-history"
+        element={
+          <ProtectedRoute>
+            <MyAttendance />
+          </ProtectedRoute>
+        }
+      />
+
+      {/* Attendance Calendar - All authenticated users */}
+      <Route
+        path="/attendance/calendar"
+        element={
+          <ProtectedRoute>
+            <AttendanceCalendar />
+          </ProtectedRoute>
+        }
+      />
+
+      {/* Attendance Report - Admin only (Superadmin & TeamLead) */}
+      <Route
+        path="/attendance/report"
+        element={
+          <ProtectedRoute>
+            <RoleBasedRoute allowedRoles={[ROLES.SUPERADMIN, ROLES.TEAMLEAD]}>
+              <AttendanceReport />
+            </RoleBasedRoute>
+          </ProtectedRoute>
+        }
+      />
+
+      {/* Notification Routes - All authenticated users */}
       <Route
         path="/notifications"
         element={
@@ -319,6 +369,12 @@ function AppRoutes() {
           </ProtectedRoute>
         }
       />
+
+
+
+
+
+
 
       {/* Default Routes */}
       <Route path="/" element={<Navigate to="/login" replace />} />
@@ -349,9 +405,11 @@ function App() {
   return (
     <BrowserRouter>
       <AuthProvider>
+        <AttendanceProvider> 
         <NotificationProvider>
           <AppRoutes />
         </NotificationProvider>
+        </AttendanceProvider>
       </AuthProvider>
     </BrowserRouter>
   );
