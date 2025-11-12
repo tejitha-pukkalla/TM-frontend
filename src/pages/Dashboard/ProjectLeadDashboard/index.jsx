@@ -1,10 +1,10 @@
-// // src/pages/Dashboard/ProjectLeadDashboard/index.jsx
 // import { useState, useEffect } from 'react';
 // import { useNavigate } from 'react-router-dom';
 // import DashboardLayout from '../../../layout/DashboardLayout';
 // import StatsCard from '../../../components/common/StatsCard';
 // import LoadingSpinner from '../../../components/common/LoadingSpinner';
 // import { dashboardService } from '../../../services/dashboard.service';
+// import AttendanceWidget from '../MemberDashboard/AttendanceWidget'; // ADD THIS IMPORT
 
 // const ProjectLeadDashboard = () => {
 //   const navigate = useNavigate();
@@ -110,6 +110,9 @@
 //             subtitle="Awaiting Team Lead approval"
 //           />
 //         </div>
+
+//         {/* ADD ATTENDANCE WIDGET HERE - BELOW STATS CARDS */}
+//         <AttendanceWidget />
 
 //         {/* Tasks by Status & Approval */}
 //         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -222,6 +225,17 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
 // src/pages/Dashboard/ProjectLeadDashboard/index.jsx
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -229,24 +243,50 @@ import DashboardLayout from '../../../layout/DashboardLayout';
 import StatsCard from '../../../components/common/StatsCard';
 import LoadingSpinner from '../../../components/common/LoadingSpinner';
 import { dashboardService } from '../../../services/dashboard.service';
-import AttendanceWidget from '../MemberDashboard/AttendanceWidget'; // ADD THIS IMPORT
+import taskService from '../../../services/task.service'; // ✅ ADD THIS IMPORT
+import AttendanceWidget from '../MemberDashboard/AttendanceWidget';
 
 const ProjectLeadDashboard = () => {
   const navigate = useNavigate();
   const [stats, setStats] = useState(null);
+  const [myTasksStats, setMyTasksStats] = useState(null); // ✅ ADD THIS STATE
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
   useEffect(() => {
-    fetchStats();
+    fetchAllData();
   }, []);
 
-  const fetchStats = async () => {
+  // ✅ MODIFIED - Fetch both dashboard stats AND my tasks stats
+  const fetchAllData = async () => {
     try {
-      const response = await dashboardService.getStats();
-      if (response.success) {
-        setStats(response.data);
+      setLoading(true);
+      
+      // Fetch general dashboard stats
+      const dashboardResponse = await dashboardService.getStats();
+      if (dashboardResponse.success) {
+        setStats(dashboardResponse.data);
       }
+
+      // ✅ Fetch MY tasks stats (tasks assigned TO me)
+      const myTasksResponse = await taskService.getMyTasks({ limit: 100 });
+      if (myTasksResponse.success) {
+        // Calculate stats from my tasks
+        const tasks = myTasksResponse.data;
+        const taskStats = {
+          total: tasks.length,
+          notStarted: tasks.filter(t => t.status === 'not-started').length,
+          inProgress: tasks.filter(t => t.status === 'in-progress').length,
+          completed: tasks.filter(t => t.status === 'completed').length,
+          pendingApproval: tasks.filter(t => 
+            t.approvalStatus === 'pending_teamlead' || t.approvalStatus === 'pending'
+          ).length,
+          approved: tasks.filter(t => t.approvalStatus === 'approved').length,
+          rejected: tasks.filter(t => t.approvalStatus === 'rejected').length
+        };
+        setMyTasksStats(taskStats);
+      }
+
     } catch (err) {
       setError('Failed to load dashboard statistics');
       console.error(err);
@@ -275,18 +315,6 @@ const ProjectLeadDashboard = () => {
 
   const myProjects = stats?.myProjects || 0;
   const tasksAssignedByMe = stats?.tasksAssignedByMe || 0;
-  const tasksByStatus = stats?.tasksByStatus || [];
-  const tasksByApproval = stats?.tasksByApproval || [];
-
-  const getStatusCount = (status) => {
-    const statusData = tasksByStatus.find(s => s._id === status);
-    return statusData?.count || 0;
-  };
-
-  const getApprovalCount = (status) => {
-    const approvalData = tasksByApproval.find(a => a._id === status);
-    return approvalData?.count || 0;
-  };
 
   return (
     <DashboardLayout>
@@ -324,26 +352,26 @@ const ProjectLeadDashboard = () => {
           />
 
           <StatsCard
-            title="Pending Approval"
-            value={getApprovalCount('pending_teamlead')}
+            title="My Pending Tasks"
+            value={myTasksStats?.pendingApproval || 0}
             icon={
               <svg className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
             }
             color="orange"
-            subtitle="Awaiting Team Lead approval"
+            subtitle="Tasks awaiting approval"
           />
         </div>
 
-        {/* ADD ATTENDANCE WIDGET HERE - BELOW STATS CARDS */}
+        {/* ADD ATTENDANCE WIDGET */}
         <AttendanceWidget />
 
-        {/* Tasks by Status & Approval */}
+        {/* ✅ MODIFIED - Tasks by Status showing MY tasks */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Tasks by Status */}
           <div className="bg-white rounded-xl shadow-md p-6 border border-gray-100">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">Tasks by Status</h2>
+            <h2 className="text-lg font-semibold text-gray-900 mb-4">My Tasks by Status</h2>
             <div className="space-y-3">
               <div className="flex items-center justify-between p-3 bg-yellow-50 rounded-lg">
                 <div className="flex items-center">
@@ -351,7 +379,7 @@ const ProjectLeadDashboard = () => {
                   <span className="text-sm font-medium text-gray-700">Not Started</span>
                 </div>
                 <span className="text-sm font-bold text-gray-900">
-                  {getStatusCount('not-started')}
+                  {myTasksStats?.notStarted || 0}
                 </span>
               </div>
 
@@ -361,7 +389,7 @@ const ProjectLeadDashboard = () => {
                   <span className="text-sm font-medium text-gray-700">In Progress</span>
                 </div>
                 <span className="text-sm font-bold text-gray-900">
-                  {getStatusCount('in-progress')}
+                  {myTasksStats?.inProgress || 0}
                 </span>
               </div>
 
@@ -371,23 +399,23 @@ const ProjectLeadDashboard = () => {
                   <span className="text-sm font-medium text-gray-700">Completed</span>
                 </div>
                 <span className="text-sm font-bold text-gray-900">
-                  {getStatusCount('completed')}
+                  {myTasksStats?.completed || 0}
                 </span>
               </div>
             </div>
           </div>
 
-          {/* Tasks by Approval Status */}
+          {/* ✅ MODIFIED - Approval Status showing MY tasks */}
           <div className="bg-white rounded-xl shadow-md p-6 border border-gray-100">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">Approval Status</h2>
+            <h2 className="text-lg font-semibold text-gray-900 mb-4">My Tasks Approval Status</h2>
             <div className="space-y-3">
               <div className="flex items-center justify-between p-3 bg-orange-50 rounded-lg">
                 <div className="flex items-center">
                   <div className="w-2 h-2 bg-orange-500 rounded-full mr-3"></div>
-                  <span className="text-sm font-medium text-gray-700">Pending TL Approval</span>
+                  <span className="text-sm font-medium text-gray-700">Pending Approval</span>
                 </div>
                 <span className="text-sm font-bold text-gray-900">
-                  {getApprovalCount('pending_teamlead')}
+                  {myTasksStats?.pendingApproval || 0}
                 </span>
               </div>
 
@@ -397,7 +425,7 @@ const ProjectLeadDashboard = () => {
                   <span className="text-sm font-medium text-gray-700">Approved</span>
                 </div>
                 <span className="text-sm font-bold text-gray-900">
-                  {getApprovalCount('approved')}
+                  {myTasksStats?.approved || 0}
                 </span>
               </div>
 
@@ -407,7 +435,7 @@ const ProjectLeadDashboard = () => {
                   <span className="text-sm font-medium text-gray-700">Rejected</span>
                 </div>
                 <span className="text-sm font-bold text-gray-900">
-                  {getApprovalCount('rejected')}
+                  {myTasksStats?.rejected || 0}
                 </span>
               </div>
             </div>
@@ -417,7 +445,17 @@ const ProjectLeadDashboard = () => {
         {/* Quick Actions */}
         <div className="bg-white rounded-xl shadow-md p-6 border border-gray-100">
           <h2 className="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <button
+              onClick={() => navigate('/my-tasks')}
+              className="flex items-center justify-center px-6 py-4 bg-purple-50 text-purple-700 rounded-lg hover:bg-purple-100 transition font-semibold"
+            >
+              <svg className="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
+              </svg>
+              View My Tasks
+            </button>
+
             <button
               onClick={() => navigate('/projects')}
               className="flex items-center justify-center px-6 py-4 bg-indigo-50 text-indigo-700 rounded-lg hover:bg-indigo-100 transition font-semibold"

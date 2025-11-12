@@ -1,56 +1,55 @@
-// src/pages/Notifications/NotificationsList.jsx
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import DashboardLayout from '../../layout/DashboardLayout';
 import { useNotifications } from '../../hooks/useNotifications';
 import NotificationItem from './components/NotificationItem';
 import NotificationFilters from './components/NotificationFilters';
-
+ 
 const NotificationsList = () => {
   const navigate = useNavigate();
-  const { 
-    notifications, 
-    unreadCount, 
-    loading, 
-    fetchNotifications, 
+  const {
+    notifications,
+    unreadCount,
+    loading,
+    fetchNotifications,
     markAsRead,
-    markAllAsRead 
+    markAllAsRead
   } = useNotifications();
-
+ 
   const [filters, setFilters] = useState({
     isRead: undefined,
     page: 1,
     limit: 20
   });
-
+ 
   useEffect(() => {
     fetchNotifications(filters);
   }, [filters, fetchNotifications]);
-
+ 
   const handleMarkAsRead = async (notificationId) => {
     await markAsRead(notificationId);
   };
-
+ 
   const handleMarkAllAsRead = async () => {
     const confirmed = window.confirm('Mark all notifications as read?');
     if (confirmed) {
       await markAllAsRead();
     }
   };
-
+ 
   const handleFilterChange = (newFilters) => {
     setFilters(prev => ({ ...prev, ...newFilters, page: 1 }));
   };
-
+ 
   const handleNotificationClick = (notification) => {
     // Mark as read
     if (!notification.isRead) {
       markAsRead(notification._id);
     }
-
+ 
     // Navigate based on notification type
     const { referenceType, referenceId } = notification;
-    
+   
     switch (referenceType) {
       case 'task':
         navigate(`/tasks/${referenceId}`);
@@ -65,10 +64,16 @@ const NotificationsList = () => {
         break;
     }
   };
-
+ 
   return (
     <DashboardLayout>
       <div className="max-w-4xl mx-auto">
+        <button
+          onClick={() => navigate('/dashboard')}
+          className="mb-6 flex items-center text-gray-600 hover:text-purple-600 font-medium"
+        >
+          ← Back to Dashboard
+        </button>
         {/* Header */}
         <div className="mb-6">
           <div className="flex items-center justify-between mb-4">
@@ -78,7 +83,7 @@ const NotificationsList = () => {
                 {unreadCount > 0 ? `${unreadCount} unread notifications` : 'All caught up!'}
               </p>
             </div>
-
+ 
             {unreadCount > 0 && (
               <button
                 onClick={handleMarkAllAsRead}
@@ -91,14 +96,14 @@ const NotificationsList = () => {
               </button>
             )}
           </div>
-
+ 
           {/* Filters */}
-          <NotificationFilters 
+          <NotificationFilters
             filters={filters}
             onFilterChange={handleFilterChange}
           />
         </div>
-
+ 
         {/* Notifications List */}
         <div className="bg-white rounded-lg shadow-sm border border-gray-200">
           {loading ? (
@@ -127,7 +132,7 @@ const NotificationsList = () => {
             </div>
           )}
         </div>
-
+ 
         {/* Pagination */}
         {notifications.length > 0 && (
           <div className="mt-6 flex items-center justify-center space-x-4">
@@ -152,5 +157,6 @@ const NotificationsList = () => {
     </DashboardLayout>
   );
 };
-
+ 
 export default NotificationsList;
+ 

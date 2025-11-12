@@ -1,19 +1,19 @@
 // frontend/src/pages/Profile/ChangePassword.jsx - NEW FILE
-
+ 
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import DashboardLayout from '../../layout/DashboardLayout';
 import { profileService } from '../../services/profile.services';
-
+ 
 const ChangePassword = () => {
   const navigate = useNavigate();
-
+ 
   const [formData, setFormData] = useState({
     currentPassword: '',
     newPassword: '',
     confirmPassword: ''
   });
-
+ 
   const [submitting, setSubmitting] = useState(false);
   const [errors, setErrors] = useState({});
   const [apiError, setApiError] = useState('');
@@ -21,7 +21,7 @@ const ChangePassword = () => {
   const [showCurrentPassword, setShowCurrentPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-
+ 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({
@@ -33,54 +33,54 @@ const ChangePassword = () => {
     }
     setApiError('');
   };
-
+ 
   const validate = () => {
     const newErrors = {};
-
+ 
     if (!formData.currentPassword) {
       newErrors.currentPassword = 'Current password is required';
     }
-
+ 
     if (!formData.newPassword) {
       newErrors.newPassword = 'New password is required';
     } else if (formData.newPassword.length < 6) {
       newErrors.newPassword = 'Password must be at least 6 characters';
     }
-
+ 
     if (!formData.confirmPassword) {
       newErrors.confirmPassword = 'Please confirm your password';
     } else if (formData.newPassword !== formData.confirmPassword) {
       newErrors.confirmPassword = 'Passwords do not match';
     }
-
-    if (formData.currentPassword && formData.newPassword && 
+ 
+    if (formData.currentPassword && formData.newPassword &&
         formData.currentPassword === formData.newPassword) {
       newErrors.newPassword = 'New password must be different from current password';
     }
-
+ 
     return newErrors;
   };
-
+ 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+ 
     const validationErrors = validate();
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
       return;
     }
-
+ 
     setSubmitting(true);
     setApiError('');
     setSuccessMessage('');
-
+ 
     try {
       const response = await profileService.changePassword({
         currentPassword: formData.currentPassword,
         newPassword: formData.newPassword,
         confirmPassword: formData.confirmPassword
       });
-
+ 
       if (response.success) {
         setSuccessMessage('Password changed successfully!');
         setFormData({
@@ -94,14 +94,14 @@ const ChangePassword = () => {
       }
     } catch (error) {
       setApiError(
-        error.response?.data?.message || 
+        error.response?.data?.message ||
         'Failed to change password. Please try again.'
       );
     } finally {
       setSubmitting(false);
     }
   };
-
+ 
   return (
     <DashboardLayout title="Change Password">
       <div className="max-w-2xl mx-auto">
@@ -115,7 +115,7 @@ const ChangePassword = () => {
           </svg>
           Back to Profile
         </button>
-
+ 
         <div className="bg-white rounded-2xl shadow-xl p-8">
           <div className="mb-8">
             <div className="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mb-4">
@@ -130,7 +130,7 @@ const ChangePassword = () => {
               Update your password to keep your account secure
             </p>
           </div>
-
+ 
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Success Message */}
             {successMessage && (
@@ -143,14 +143,14 @@ const ChangePassword = () => {
                 </div>
               </div>
             )}
-
+ 
             {/* Error Message */}
             {apiError && (
               <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
                 {apiError}
               </div>
             )}
-
+ 
             {/* Current Password */}
             <div>
               <label className="block text-sm font-semibold text-gray-700 mb-2">
@@ -187,7 +187,7 @@ const ChangePassword = () => {
               </div>
               {errors.currentPassword && <p className="mt-1 text-sm text-red-600">{errors.currentPassword}</p>}
             </div>
-
+ 
             {/* New Password */}
             <div>
               <label className="block text-sm font-semibold text-gray-700 mb-2">
@@ -227,7 +227,7 @@ const ChangePassword = () => {
                 Password must be at least 6 characters long
               </p>
             </div>
-
+ 
             {/* Confirm Password */}
             <div>
               <label className="block text-sm font-semibold text-gray-700 mb-2">
@@ -264,7 +264,7 @@ const ChangePassword = () => {
               </div>
               {errors.confirmPassword && <p className="mt-1 text-sm text-red-600">{errors.confirmPassword}</p>}
             </div>
-
+ 
             {/* Security Tips */}
             <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
               <div className="flex items-start">
@@ -284,7 +284,7 @@ const ChangePassword = () => {
                 </div>
               </div>
             </div>
-
+ 
             {/* Action Buttons */}
             <div className="flex gap-4 pt-4">
               <button
@@ -323,5 +323,6 @@ const ChangePassword = () => {
     </DashboardLayout>
   );
 };
-
+ 
 export default ChangePassword;
+ 

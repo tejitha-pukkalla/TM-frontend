@@ -3,7 +3,7 @@ const NotificationFilters = ({ filters, onFilterChange }) => {
   const handleFilterChange = (key, value) => {
     onFilterChange({ [key]: value });
   };
-
+ 
   return (
     <div className="flex items-center space-x-4 bg-white p-4 rounded-lg border border-gray-200">
       {/* Filter by Read Status */}
@@ -25,7 +25,7 @@ const NotificationFilters = ({ filters, onFilterChange }) => {
           <option value="read">Read Only</option>
         </select>
       </div>
-
+ 
       {/* Items per page */}
       <div className="flex items-center space-x-2">
         <label className="text-sm font-medium text-gray-700">Show:</label>
@@ -42,5 +42,6 @@ const NotificationFilters = ({ filters, onFilterChange }) => {
     </div>
   );
 };
-
+ 
 export default NotificationFilters;
+ 
